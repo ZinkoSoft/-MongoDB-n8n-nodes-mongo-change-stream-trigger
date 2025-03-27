@@ -1,46 +1,77 @@
-![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
+# n8n-nodes-mongo-change-stream-trigger
 
-# n8n-nodes-starter
+This is an n8n community node. It lets you use MongoDB Change Streams in your n8n workflows.
 
-This repo contains example nodes to help you get started building your own custom integrations for [n8n](n8n.io). It includes the node linter and other dependencies.
+MongoDB Change Streams allow applications to access real-time data changes without complex polling. This node listens for changes in MongoDB collections and triggers workflows when documents are inserted, updated, deleted, or when collections are modified.
 
-To make your custom node available to the community, you must create it as an npm package, and [submit it to the npm registry](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
+[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
-## Prerequisites
+[Installation](#installation)  
+[Operations](#operations)  
+[Credentials](#credentials)  
+[Compatibility](#compatibility)  
+[Usage](#usage)  
+[Resources](#resources)  
 
-You need the following installed on your development machine:
+## Installation
 
-* [git](https://git-scm.com/downloads)
-* Node.js and pnpm. Minimum version Node 18. You can find instructions on how to install both using nvm (Node Version Manager) for Linux, Mac, and WSL [here](https://github.com/nvm-sh/nvm). For Windows users, refer to Microsoft's guide to [Install NodeJS on Windows](https://docs.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows).
-* Install n8n with:
-  ```
-  pnpm install n8n -g
-  ```
-* Recommended: follow n8n's guide to [set up your development environment](https://docs.n8n.io/integrations/creating-nodes/build/node-development-environment/).
+Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
 
-## Using this starter
+## Operations
 
-These are the basic steps for working with the starter. For detailed guidance on creating and publishing nodes, refer to the [documentation](https://docs.n8n.io/integrations/creating-nodes/).
+This node works as a trigger that starts workflows when changes occur in MongoDB:
 
-1. [Generate a new repository](https://github.com/n8n-io/n8n-nodes-starter/generate) from this template repository.
-2. Clone your new repo:
-   ```
-   git clone https://github.com/<your organization>/<your-repo-name>.git
-   ```
-3. Run `pnpm i` to install dependencies.
-4. Open the project in your editor.
-5. Browse the examples in `/nodes` and `/credentials`. Modify the examples, or replace them with your own nodes.
-6. Update the `package.json` to match your details.
-7. Run `pnpm lint` to check for errors or `pnpm lintfix` to automatically fix errors when possible.
-8. Test your node locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
-9. Replace this README with documentation for your node. Use the [README_TEMPLATE](README_TEMPLATE.md) to get started.
-10. Update the LICENSE file to use your details.
-11. [Publish](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry) your package to npm.
+- **Insert**: Triggers when new documents are added to a collection
+- **Update**: Triggers when existing documents are modified
+- **Replace**: Triggers when documents are replaced
+- **Delete**: Triggers when documents are removed
+- **Drop**: Triggers when collections are dropped
+- **Rename**: Triggers when collections are renamed
 
-## More information
+## Credentials
 
-Refer to our [documentation on creating nodes](https://docs.n8n.io/integrations/creating-nodes/) for detailed information on building your own nodes.
+You need to set up MongoDB credentials:
 
-## License
+1. Create a new MongoDB connection in n8n (Credentials → New → MongoDB Trigger API)
+2. Enter your MongoDB connection string (e.g., `mongodb://username:password@localhost:27017`)
+3. The user needs at least read permissions on the target database and collection
 
-[MIT](https://github.com/n8n-io/n8n-nodes-starter/blob/master/LICENSE.md)
+**Note**: For change streams to work, your MongoDB deployment must be:
+- A replica set or sharded cluster (not a standalone instance)
+- MongoDB 3.6 or higher
+
+## Compatibility
+
+- Requires n8n version 0.125.0 or later
+- Requires MongoDB 3.6 or later (with replica set or sharded cluster)
+
+## Usage
+
+1. **Basic Setup**:
+   - Select the database and collection you want to monitor
+   - Choose which operation types you want to trigger on (insert, update, delete, etc.)
+   
+2. **Field Monitoring**:
+   - Use `*` to listen for any changes
+   - Enter specific field names (comma-separated) to only trigger when these fields change
+
+3. **Filtering**:
+   - Add filters to only trigger when specific field values match your conditions
+   - Example: Only trigger when `status` field equals `completed`
+
+4. **Output Format**:
+   The node produces a clean, readable output with:
+   - Operation type (insert, update, etc.)
+   - Timestamp of the change
+   - Database and collection names
+   - Document ID
+   - Changed fields and values (for updates)
+   - Complete document (for inserts)
+
+## Resources
+
+* [n8n community nodes documentation](https://docs.n8n.io/integrations/community-nodes/)
+* [MongoDB Change Streams documentation](https://www.mongodb.com/docs/manual/changeStreams/)
+* [MongoDB Node.js Driver documentation](https://mongodb.github.io/node-mongodb-native/)
+
+
